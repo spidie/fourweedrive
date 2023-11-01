@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 function App() {
-  const [campsites, setCampsites] = useState([]);
+  const [campsites, setCampsites] = useState({ features: [] });
 
   useEffect(() => {
     fetch('http://localhost:5000/campsites')
@@ -12,21 +12,16 @@ function App() {
   }, []);
 
   return (
-    <MapContainer center={[-28.0167, 153.4]} zoom={10} style={{ width: '100%', height: '100vh' }}>
+    <MapContainer center={[-28.01726, 153.425699]} zoom={13} style={{flex: 1}}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {campsites.map(campsite => (
-        campsite.location && campsite.location.coordinates ?
-          <Marker 
-            key={campsite.id} 
-            position={[campsite.location.coordinates[1], campsite.location.coordinates[0]]}
-          >
-            <Popup>
-              {campsite.name}
-            </Popup>
-          </Marker>
-        : null
+      {campsites.features.map(feature => (
+        <Marker key={feature.properties.id} position={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}>
+          <Popup>
+            {feature.properties.name}
+          </Popup>
+        </Marker>
       ))}
     </MapContainer>
   );
